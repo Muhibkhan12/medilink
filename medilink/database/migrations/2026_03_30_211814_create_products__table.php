@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('Product_Name');
             $table->integer('quantity')->default(0);
-            $table->int('price');
-            $table->string('discription');
+            $table->integer('price');
+            $table->string('discription')->nullable();
 
 
             $table->timestamps();

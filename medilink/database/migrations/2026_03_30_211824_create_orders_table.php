@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->on('user')->onDelete('cascade');
+
+            $table->int('total');
+            $table->enum('status',['pending','completed','cancelled'])->default('pending');
             $table->timestamps();
         });
     }
