@@ -44,4 +44,11 @@ class AuthController extends Controller
             'token' => $token,
         ]);
     }
+    public function logout(Request $request){
+        Auth::guard('api')->logout();
+
+        return response()->json([
+            'message'=>'Logout Successfully',
+        ]);
+    }
 }
