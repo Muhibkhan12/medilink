@@ -48,11 +48,11 @@ class AuthController extends Controller
     }
 
     protected function responseWithToken($token){
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
-            'user' => Auth::guard('api')->user()
-        ]);
-    }
+    return response()->json([
+        'access_token' => $token,
+        'token_type' => 'bearer',
+        'expires_in' => config('jwt.ttl') * 60,
+        'user' => auth('api')->user()
+    ]);
+}
 }
