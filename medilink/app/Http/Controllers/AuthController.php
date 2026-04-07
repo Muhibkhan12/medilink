@@ -6,15 +6,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\Guard;
 
 class AuthController extends Controller
 {
     public function register(Request $request){
-        $validateUser = $request->validate([
-            'name' => 'required|string|max:255 ',
-            'email' => 'required|string|max:255',
-            'password'=>'required|string|min:9|confirmed',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password'=>'required|string|min:6|confirmed',
         ]);
 
         $user = User::create([
@@ -22,33 +21,38 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password), 
         ]);
+
         $token = Auth::guard('api')->login($user);
 
-        return response()->json([
-            'message'=>'User Registered Successfully',
-            'token' => $token,
-        ],201);
+        return $this->responseWithToken($token);
     }
-
 
     public function login(Request $request){
         $credentials = $request->only('email', 'password'); 
+
         if (!$token = Auth::guard('api')->attempt($credentials)) {
             return response()->json([
                 'error' => 'Invalid credentials'
             ], 401);
         }
 
-        return response()->json([
-            'message' => 'LoggedIn Successfully',
-            'token' => $token,
-        ]);
+        return $this->responseWithToken($token);
     }
+
     public function logout(){
         Auth::guard('api')->logout();
 
         return response()->json([
             'message'=>'Logout Successfully',
+        ]);
+    }
+
+    protected function responseWithToken($token){
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
+            'user' => Auth::guard('api')->user()
         ]);
     }
 }
