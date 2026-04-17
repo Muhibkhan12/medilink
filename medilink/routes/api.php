@@ -10,5 +10,6 @@ Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']
 
 Route::prefix('/user')->group(function(){
     Route::get('/{id}',[UserController::class,'getUser'])->name('get-user');
-
+    Route::put('/update/{id}',[UserController::class,'updateUser'])->name('update-user');
+    Route::delete('/delete/{id}',[UserController::class,'deleteUser'])->name('delete-user');
 });
