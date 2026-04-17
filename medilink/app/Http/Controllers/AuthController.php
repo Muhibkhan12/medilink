@@ -14,13 +14,15 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password'=>'required|string|min:6|confirmed',
+            'number'=>'required|string|max:20',
+            'address'=>'required|string|max:200',
+            'role' => 'required|string',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), 
-            
+            'password' => Hash::make($request->password),
         ]);
 
         $token = Auth::guard('api')->login($user);
@@ -35,7 +37,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password'); 
+        $credentials = $request->only('email', 'password');
 
         if (!$token = Auth::guard('api')->attempt($credentials)) {
             return response()->json([
